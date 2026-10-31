@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#09242b">
+<title>ニコラナと星のかけら｜チャレンジ版 v2</title>
+<style>
+:root{color-scheme:dark;--ink:#f8f3da;--soft:#c4d7c9;--gold:#f6d17c;--teal:#8ee4c8;--edge:rgba(245,220,149,.3)}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 20% 5%,#24423f 0,transparent 45%),linear-gradient(155deg,#081a24,#08232b 55%,#0b1526);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif}
+button,input{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible{outline:3px solid #f6d17c;outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.45}
+.app{width:min(100%,490px);margin:auto;padding:20px 15px 45px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:1px 0 14px}.brand{display:flex;align-items:center;gap:11px}.brand-mark{display:grid;place-items:center;border:1px solid var(--edge);width:43px;height:43px;border-radius:50%;font-size:22px;background:#173b39;box-shadow:0 0 28px #a5de9a22}.eyebrow{font-size:10px;letter-spacing:.22em;color:var(--gold);font-weight:750}.top h1{font-family:Georgia,"Yu Mincho",serif;font-weight:700;font-size:20px;letter-spacing:.045em;margin:3px 0 0}.demo{border:1px solid var(--edge);border-radius:999px;padding:5px 10px;font-size:10px;letter-spacing:.08em;color:#e5d7b4;white-space:nowrap}
+.board{width:100%;position:relative;aspect-ratio:400/560;overflow:hidden;border:2px solid #8c87634f;border-radius:20px;isolation:isolate;background:#0c3137;box-shadow:0 22px 64px #020d1c95,0 0 0 4px #dfce8d0d}
+#game{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+.hud{position:absolute;inset:14px 14px auto;display:flex;align-items:flex-start;justify-content:space-between;gap:8px;pointer-events:none}.hud-pill{border:1px solid #efdaa055;border-radius:13px;background:#071b26c9;box-shadow:0 2px 12px #0004;backdrop-filter:blur(6px);padding:8px 10px}.hud-label{display:block;color:#c5d4ca;letter-spacing:.1em;font-size:9px;font-weight:700}.hud-value{font-weight:850;font-size:20px;line-height:1.35;font-variant-numeric:tabular-nums}.hud-mid{text-align:center}.hearts{color:#ffaab1;letter-spacing:.07em;font-size:20px}.time-low{color:#ffc5a7}
+.screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:15px;background:linear-gradient(180deg,#061a24b3,#061a24c8 45%,#061a24e5);overflow-y:auto}.screen[hidden],.hud[hidden],.hidden{display:none!important}
+.panel{width:100%;max-width:365px;border:1px solid #f3d89877;border-radius:19px;text-align:center;background:linear-gradient(165deg,#183c42f2,#0b2637f4);box-shadow:0 9px 35px #020916aa,inset 0 1px #fff2;padding:21px 23px 18px}.ornament{color:var(--gold);letter-spacing:.28em;font-size:16px;margin:0 0 8px}.panel h2{font-family:Georgia,"Yu Mincho",serif;font-size:27px;line-height:1.32;letter-spacing:.02em;margin:0 0 6px;font-weight:750}.panel .sub{color:#c7dace;line-height:1.55;font-size:12px;margin:5px 0 17px}.ruleline{height:1px;background:linear-gradient(90deg,transparent,#c9bb8677,transparent);margin:14px 0}
+.field{text-align:left;margin-bottom:12px}.field label{display:block;font-size:12px;color:#d9e4d8;margin-bottom:6px;font-weight:750}.input{color:#fff6d9;display:block;width:100%;border-radius:11px;padding:12px 13px;border:1px solid #a9bea080;background:#071b2d;outline:none;min-width:0}.input::placeholder{color:#98aba8}.input:focus{border-color:var(--gold)}.small{font-size:10px;color:#c2d0c5;line-height:1.55}.error{min-height:16px;color:#ffc5bc;font-size:11px;margin-bottom:4px}
+.primary,.secondary{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border-radius:12px;min-height:44px;font-weight:800;border:1px solid transparent;padding:10px 12px}.primary{background:linear-gradient(105deg,#ffe6a2,#f2c36e);color:#20312d;box-shadow:0 6px 15px #f8cf8a26}.primary:active,.secondary:active{transform:translateY(1px)}.secondary{border-color:#a3d8c366;background:#124140;color:#e5f7ed}.small-btn{font-size:12px;min-height:39px}.action-stack{display:grid;gap:9px}
+.result-tag{display:inline-block;border-radius:100px;border:1px solid #ddbd77a3;color:#ffe0a2;padding:5px 12px;font-size:11px;letter-spacing:.11em;background:#513a1a55}.result-name{font-size:13px;color:#d6eee2;margin:8px 0 5px;overflow-wrap:anywhere}.bigscore{font-size:clamp(39px,11vw,58px);font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.06em;color:#ffe4a1;line-height:1.08}.bigscore span{font-size:14px;letter-spacing:0;color:#e3dbbb}.best-text{font-size:11px;margin:8px 0 0;color:#d7e9da}.result-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:13px 0 14px}.stat{border:1px solid #b1caaf3b;background:#0c242b88;padding:9px 3px;border-radius:10px}.stat span{display:block;color:#b9d0c9;font-size:10px}.stat b{display:block;font-size:19px;margin-top:3px}.result-screen .panel{padding:14px 20px}.result-screen h2{font-size:23px}.result-screen .ornament{margin:0 0 2px}.result-screen .action-stack{gap:6px}.result-screen .primary,.result-screen .secondary{min-height:37px;font-size:12px;padding:7px}
+.controls{display:flex;align-items:center;gap:12px;margin-top:13px}.movebtn{flex:1;height:60px;border:1px solid #92c9b970;background:linear-gradient(#173e42,#103138);border-radius:15px;color:#d3eadc;font-weight:800;font-size:18px;box-shadow:inset 0 1px #fff2;touch-action:none;user-select:none;-webkit-user-select:none}.movebtn:active,.movebtn.active{background:#28605b;border-color:#caead8}.control-info{text-align:center;min-width:87px;line-height:1.5}.control-info strong{display:block;font-size:11px}.control-info span{display:block;font-size:10px;color:#b3cec1}
+.toolbar{display:flex;gap:8px;margin-top:13px}.toolbar button{flex:1;font-size:12px;min-height:42px}.section{margin-top:14px;border:1px solid #56736c70;background:#0d2931e0;border-radius:17px;padding:17px}.section h3{font-size:17px;margin:0 0 4px}.section p{font-size:12px;line-height:1.7;color:#c4d7cb;margin:5px 0 12px}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:4px;border-radius:12px;background:#071c26;margin:15px 0 12px}.tab{min-height:38px;font-size:12px;border-radius:9px;background:transparent;color:#b8ccc3;border:0}.tab.on{color:#112b2f;background:#e5d29b;font-weight:800}.ranklist{display:grid;gap:6px}.rankrow{display:grid;grid-template-columns:36px 1fr auto;gap:9px;align-items:center;background:#123741;border:1px solid #ffffff19;border-radius:10px;padding:9px 10px;font-size:12px}.rankrow .pos{font-family:Georgia,serif;color:#f0d38b;font-weight:900;font-size:17px}.rankrow .who{min-width:0;overflow-wrap:anywhere}.rankrow .pts{font-size:14px;font-weight:850;color:#f7dfa6;font-variant-numeric:tabular-nums}.empty{padding:18px 10px;border:1px dashed #ffffff42;border-radius:10px;text-align:center;font-size:12px;line-height:1.7;color:#b9cfc5}.rank-form{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:7px}.rank-form .wide{grid-column:1 / -1}.rank-form input{font-size:13px}.rank-form button{grid-column:1 / -1}.hintbox{border-radius:12px;border:1px solid #92a98444;background:#14373a;padding:10px 12px;color:#cfdfce;font-size:11px;line-height:1.65;margin:10px 0}.meta{margin-top:17px;text-align:center;font-size:10px;color:#94b5ac;line-height:1.8}.meta strong{color:#d5d8b1}.muted{color:#aec5bc}.editlist{display:grid;gap:5px;margin:12px 0}.editrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 9px;background:#0a222c;border-radius:9px;font-size:11px}.editrow button{background:none;border:1px solid #cba9a955;border-radius:8px;color:#e0bdb8;padding:6px 10px}.rank-actions{display:flex;gap:8px;margin-top:11px}.rank-actions button{flex:1;min-width:0;font-size:11px}
+.soundbtn[aria-pressed="false"]{color:#a9b9b5;border-color:#657d78}
+.gamble-screen{z-index:5;background:linear-gradient(180deg,#101024e8,#191630ef)}
+.gamble-panel{border-color:#e5b2f8b2;background:linear-gradient(160deg,#322650,#162b3f 88%);box-shadow:0 0 70px #be8bdf35,0 12px 35px #0008}
+.gamble-panel h2{font-size:25px}
+.gamble-symbol{font-size:46px;color:#ffdcaa;filter:drop-shadow(0 0 13px #ffc98bb0);line-height:1.3}
+.gamble-rules{display:grid;gap:10px;margin-top:13px}
+.gamble-rules button{min-height:65px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.gamble-rules small{font-size:10px;font-weight:500;opacity:.93}
+.riskbtn{border:1px solid #e9c0ffad;background:linear-gradient(110deg,#65458b,#503b75);color:#fff3ff;border-radius:12px;font-weight:800}
+.challenge-banner{font-size:10px;color:#d7c9ef;margin-top:10px}
+.difficulty-note{display:inline-block;border:1px solid #b98d85a0;background:#5a312d55;border-radius:999px;padding:4px 9px;font-size:10px;margin-bottom:9px;color:#ffd7bc}
+.result-screen .result-stats{grid-template-columns:1fr 1fr 1fr}
+.result-screen .stat b{font-size:16px}
+.hide{display:none!important}
+@media(max-width:390px){.app{padding:13px 10px 38px}.top h1{font-size:18px}.panel{padding:13px 16px}.panel h2{font-size:23px}.panel .sub{margin:5px 0 10px}.screen{padding:12px}.ornament{margin-bottom:4px}.ruleline{margin:10px 0}.result-screen .panel{padding:10px 15px}.result-screen h2{font-size:21px}.result-stats{margin:8px 0}.result-name{margin:5px 0}.result-screen .primary,.result-screen .secondary{min-height:33px}.result-screen .action-stack{gap:5px}.movebtn{height:53px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important}}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <div class="brand"><div class="brand-mark" aria-hidden="true">✦</div><div><div class="eyebrow">NICORANA • THE PROMISED FOREST</div><h1>ニコラナと星のかけら</h1></div></div>
+    <span class="demo">CHALLENGE v2</span>
+  </header>
+  <div class="board" id="board">
+    <canvas id="game" width="400" height="560" aria-label="ニコラナを動かして落ちる星を集めるゲーム"></canvas>
+    <div class="hud" id="hud" hidden>
+      <div class="hud-pill"><span class="hud-label">SCORE</span><span class="hud-value" id="hudScore">0</span></div>
+      <div class="hud-pill hud-mid"><span class="hud-label">LIFE</span><span class="hud-value hearts" id="hudLives">♥♥♥</span></div>
+      <div class="hud-pill hud-mid"><span class="hud-label">TIME</span><span class="hud-value" id="hudTime">45</span></div>
+    </div>
+    <div class="screen" id="startScreen">
+      <div class="panel">
+        <div class="ornament">✧ ✦ ✧</div>
+        <h2>約束の森に、<br>星が降る夜。</h2>
+        <p class="sub">小さなニコラナと、45秒の星集め。<br>増えていくトゲの実をよけて高得点をねらおう！</p><div class="difficulty-note">NEW：だんだん激しくなる森 × 運命の宝石</div>
+        <div class="ruleline"></div>
+        <div class="field"><label for="nickname">あなたの冒険者名</label><input id="nickname" class="input" maxlength="16" autocomplete="nickname" placeholder="リスナー名を入力"></div>
+        <div class="error" id="nickError" role="status"></div>
+        <button class="primary" id="startBtn">✦　冒険をはじめる</button>
+        <p class="small" style="margin:12px 0 0">スマホ：左右ボタン／画面をなぞる<br>PC：← → キー／マウス移動<br>登録不要・通信不要／音声は下のボタンで切替</p>
+      </div>
+    </div>
+    <div class="screen result-screen" id="resultScreen" hidden>
+      <div class="panel">
+        <div class="ornament">✦ ✧ ✦</div>
+        <h2>冒険の記録</h2>
+        <div class="result-name" id="resultName"></div>
+        <div class="bigscore" id="resultScore">0 <span>pt</span></div>
+        <div class="result-tag" id="resultTitle">森の旅人</div>
+        <p class="best-text" id="resultBest"></p>
+        <div class="result-stats"><div class="stat"><span>集めた星</span><b id="resultStars">0</b></div><div class="stat"><span>最大コンボ</span><b id="resultCombo">0</b></div><div class="stat"><span>運命の勝利</span><b id="resultWins">0/0</b></div></div>
+        <div class="action-stack">
+          <button class="primary" id="saveResultBtn">画像で保存（PNG）</button>
+          <button class="secondary" id="againBtn">もう一度あそぶ</button>
+          <button class="secondary" id="finishBtn">タイトルへ戻る</button>
+        </div>
+        <div class="small" style="margin-top:7px">画像を仲間に送って、スコアを競おう</div>
+      </div>
+    </div>
+    <div class="screen gamble-screen" id="gambleScreen" hidden role="dialog" aria-modal="true" aria-labelledby="gambleHeading">
+      <div class="panel gamble-panel">
+        <div class="gamble-symbol" aria-hidden="true">✧ ◈ ✧</div>
+        <h2 id="gambleHeading">運命の宝石！</h2>
+        <p class="sub">森のきらめきを見つけた。<br>確実に受け取る？ それとも勝負する？</p>
+        <div class="gamble-rules">
+          <button class="primary" id="safeBtn">確実に受け取る <b>＋600 pt</b><small>必ず得点になる</small></button>
+          <button class="riskbtn" id="riskBtn">運命に賭ける <b>一発勝負！</b><small>40%で＋3,000 pt ／ 60%で－400 pt ＆ コンボリセット</small></button>
+        </div>
+        <div class="challenge-banner">※ ゲーム内ポイントだけの運試し。選ぶ間はタイマー停止。</div>
+      </div>
+    </div>
+  </div>
+  <div class="controls" id="controls">
+    <button class="movebtn" id="leftBtn" aria-label="左へ移動">◀　左</button>
+    <div class="control-info"><strong>星をキャッチ</strong><span>トゲの実は回避！</span></div>
+    <button class="movebtn" id="rightBtn" aria-label="右へ移動">右　▶</button>
+  </div>
+  <div class="toolbar"><button class="secondary" id="rankingBtn">★ ランキング</button><button class="secondary" id="helpBtn">？ ルール</button><button class="secondary soundbtn" id="soundBtn" aria-pressed="true">♪ 音 ON</button></div>
+  <section class="section hidden" id="helpPanel"><h3>あそびかた</h3><p>45秒で星を集めて高得点を目指します。黄色100点、水色300点、桃色500点。連続取得で最大4倍。黒いトゲの実に3回当たると終了です。<strong>時間が経つと落下速度・トゲの数が増え、後半は左右に動くトゲも登場</strong>します。</p><p>紫金色の「運命の宝石」を取るとゲームが一時停止し、確実に600点を得るか、40%の確率で3,000点を狙うか選べます。運試しに失敗すると400点減り、コンボが途切れます（得点は0未満になりません）。現金・課金はありません。</p><p>スマホでは左右ボタンの長押し、またはゲーム画面のドラッグ。PCでは左右矢印キー／マウスで操作します。音声は「音 ON／OFF」で切り替えられます。ゲームの条件は全プレイヤー共通です。</p><div class="hintbox">このバージョンでは難易度と得点バランスを変更しているため、前の体験版とベストスコア・ランキングの保存領域を分けています。端末内のみ保存されます。</div><div class="hintbox">非公式のゲーム試作品です。カエルと背景は仮のオリジナル図形です。原作の正式な絵柄ではありません。</div></section>
+  <section class="section hidden" id="rankPanel">
+    <h3>森の冒険者ランキング</h3><p>この端末の記録と、主催者が集めた申告スコアを別々に管理できます。</p>
+    <div class="tabs"><button class="tab on" id="tabLocal">この端末の記録</button><button class="tab" id="tabEvent">イベント用（手入力）</button></div>
+    <div id="localPanel"><div id="localRanking" class="ranklist"></div><div class="hintbox">ここに表示されるのは<strong>このブラウザで遊んだ記録だけ</strong>です。他のリスナーのスコアは自動では入りません。</div></div>
+    <div id="eventPanel" class="hidden">
+      <div class="hintbox">配信者がスクショで届いた得点を入力して、順位表を作るための機能です。同じ名前は最高得点で更新します。このブラウザにだけ保存されます。</div>
+      <form id="rankForm" class="rank-form"><input class="input" id="rankName" maxlength="16" placeholder="リスナー名" required aria-label="登録する名前"><input class="input" id="rankScore" type="number" min="0" max="999999999" step="1" placeholder="スコア" required aria-label="登録するスコア"><button class="primary small-btn" type="submit">この得点を登録</button></form>
+      <div class="error" id="rankError" role="status"></div>
+      <div id="eventRanking" class="ranklist"></div><div id="eventEdit" class="editlist"></div>
+      <div class="rank-actions"><button class="secondary small-btn" id="saveRankBtn">順位表を画像保存</button><button class="secondary small-btn" id="clearRankBtn">記録を全削除</button></div>
+    </div>
+  </section>
+  <footer class="meta"><strong>NICORANA — 星のかけら</strong><br>ファンイベント向け非公式チャレンジ版 v2／外部通信なし<br>スコアは端末保存、共有には画像提出を利用してください。</footer>
+</main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const C=$('game'),ctx=C.getContext('2d');const W=400,H=560;
+const storePrefix='nicorana.stars.challenge.v2.';
+const memoryStore={};
+function get(key,defaultValue){try{let v=localStorage.getItem(storePrefix+key);if(v!==null)return JSON.parse(v)}catch(e){}return Object.prototype.hasOwnProperty.call(memoryStore,key)?memoryStore[key]:defaultValue}
+function put(key,value){memoryStore[key]=value;try{localStorage.setItem(storePrefix+key,JSON.stringify(value))}catch(e){}}
+function finiteScore(n){return Number.isSafeInteger(n)&&n>=0&&n<=999999999}
+function cleanName(value){return String(value||'').trim().slice(0,16)}
+const fmt=n=>Math.floor(n).toLocaleString('ja-JP');
+const state={status:'start',name:'',score:0,best:0,stars:0,combo:0,maxCombo:0,lives:3,elapsed:0,playerX:200,targetX:null,move:0,items:[],particles:[],spawnStar:0,spawnThorn:0,spawnGem:0,invuln:0,lastTime:0,animation:0,result:null,gambles:0,wins:0,face:'normal',faceLeft:0,feedback:'',feedbackLeft:0,wave:0,waveLeft:0};
+const storedName=get('lastName',''); if(typeof storedName==='string')$('nickname').value=storedName.slice(0,16);
+const titles=[
+[0,'森に迷いし旅人'],[500,'はじめての星拾い'],[1500,'月明かりの散歩人'],
+[3000,'きらめきの見習い'],[5000,'木霊のともだち'],[7500,'星屑の案内人'],
+[10500,'光を集めし者'],[14000,'夜露の守り人'],[18000,'約束の運び手'],
+[23000,'森の星詠み'],[29000,'月冠の冒険者'],[36000,'奇跡を呼ぶ旅人'],
+[44000,'約束の森の守護者'],[55000,'伝説の星紡ぎ'],[70000,'星空の王冠']
+];
+function titleFor(score){let answer=titles[0][1];for(const [at,name] of titles){if(score<at)break;answer=name}return answer}
+const AudioMaker=window.AudioContext||window.webkitAudioContext;
+let audio=null, soundEnabled=get('sound',true)!==false, soundLast=0;
+function soundUI(){$('soundBtn').textContent=soundEnabled?'♪ 音 ON':'♪ 音 OFF';$('soundBtn').setAttribute('aria-pressed',String(soundEnabled))}
+function unlockAudio(){if(!soundEnabled||!AudioMaker)return;try{if(!audio)audio=new AudioMaker();if(audio.state==='suspended')audio.resume().catch(()=>{})}catch(e){audio=null}}
+function tone(hz,dur=.11,offset=0,type='sine',volume=.022){
+ if(!soundEnabled||!audio||audio.state!=='running')return;
+ try{const now=audio.currentTime+offset;const osc=audio.createOscillator(),gain=audio.createGain();
+ osc.type=type;osc.frequency.setValueAtTime(hz,now);gain.gain.setValueAtTime(.0001,now);
+ gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),now+.018);
+ gain.gain.exponentialRampToValueAtTime(.0001,now+dur);
+ osc.connect(gain);gain.connect(audio.destination);osc.start(now);osc.stop(now+dur+.015)}catch(e){}
+}
+function sfx(kind){if(!soundEnabled||!audio||audio.state!=='running')return;
+ const now=audio.currentTime;if(kind==='star'&&now-soundLast<.075)return;if(kind==='star')soundLast=now;
+ switch(kind){
+ case 'star':tone(660,.09,0);tone(980,.13,.045);break;
+ case 'blue':tone(600,.09,0);tone(830,.11,.07);tone(1100,.15,.12);break;
+ case 'pink':tone(780,.13,0);tone(990,.13,.07);tone(1320,.2,.15);break;
+ case 'hurt':tone(185,.22,0,'sawtooth',.027);tone(115,.28,.09,'triangle',.022);break;
+ case 'gem':tone(440,.16);tone(554,.18,.1);tone(740,.22,.2);break;
+ case 'safe':tone(600,.11);tone(780,.18,.09);break;
+ case 'win':[523,659,784,1046,1319].forEach((n,i)=>tone(n,.18,i*.085,'triangle',.028));break;
+ case 'lose':tone(430,.2,0,'triangle',.022);tone(310,.26,.14,'triangle',.02);tone(200,.29,.27,'triangle',.018);break;
+ case 'tick':tone(570,.05,0,'triangle',.011);break;
+ case 'end':tone(500,.16);tone(625,.18,.1);tone(750,.25,.22);break;
+ }
+}
+function react(face,msg='',seconds=.75){state.face=face;state.faceLeft=seconds;state.feedback=msg;state.feedbackLeft=msg?Math.min(1.3,seconds+.3):0}
+soundUI();$('soundBtn').addEventListener('click',()=>{soundEnabled=!soundEnabled;put('sound',soundEnabled);soundUI();if(soundEnabled){unlockAudio();sfx('safe')}});
+
+function rand(min,max){return min+Math.random()*(max-min)}
+function pathRound(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function starShape(x,y,outer,inner,rot=0){ctx.beginPath();for(let i=0;i<10;i++){let a=rot-Math.PI/2+i*Math.PI/5,r=i%2?inner:outer;let px=x+Math.cos(a)*r,py=y+Math.sin(a)*r;if(!i)ctx.moveTo(px,py);else ctx.lineTo(px,py)}ctx.closePath()}
+function drawTree(x,y,s,color){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=color;ctx.fillRect(-5,-72,10,80);for(let k=0;k<3;k++){ctx.beginPath();ctx.moveTo(0,-185+k*42);ctx.lineTo(-46+k*5,-95+k*33);ctx.quadraticCurveTo(0,-110+k*30,46-k*5,-95+k*33);ctx.closePath();ctx.fill()}ctx.restore()}
+function forest(time){let bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#08172b');bg.addColorStop(.54,'#135049');bg.addColorStop(1,'#102e2f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+ctx.save();ctx.shadowColor='#ffe9b0';ctx.shadowBlur=35;ctx.fillStyle='#f8eacb';ctx.beginPath();ctx.arc(311,100,36,0,Math.PI*2);ctx.fill();ctx.restore();ctx.fillStyle='#dceacc20';ctx.beginPath();ctx.arc(311,100,53,0,Math.PI*2);ctx.fill();
+for(let i=0;i<40;i++){let x=(i*113+31)%W,y=(i*73+19)%360,a=.18+.28*(1+Math.sin(time*.6+i))/2;ctx.fillStyle=`rgba(255,237,190,${a})`;ctx.beginPath();ctx.arc(x,y,(i%5===0?1.6:.8),0,Math.PI*2);ctx.fill()}
+ctx.fillStyle='#0a3039';ctx.beginPath();ctx.moveTo(0,340);ctx.quadraticCurveTo(70,270,157,345);ctx.quadraticCurveTo(250,260,400,340);ctx.lineTo(400,H);ctx.lineTo(0,H);ctx.fill();
+for(let i=0;i<10;i++){drawTree((i*79+20)%475-40,430+((i*27)%45),.55+(i%3)*.13,'#102b33')}
+ctx.fillStyle='#13372d';ctx.beginPath();ctx.moveTo(0,477);ctx.quadraticCurveTo(90,435,191,482);ctx.quadraticCurveTo(304,443,400,485);ctx.lineTo(400,H);ctx.lineTo(0,H);ctx.fill();
+for(let i=0;i<7;i++){drawTree(i*72-30,475+(i%2)*18,.66+(i%3)*.1,'#092c2d')}
+let soil=ctx.createLinearGradient(0,465,0,560);soil.addColorStop(0,'#225644');soil.addColorStop(1,'#0c3837');ctx.fillStyle=soil;ctx.beginPath();ctx.moveTo(0,493);ctx.quadraticCurveTo(160,468,400,490);ctx.lineTo(400,H);ctx.lineTo(0,H);ctx.fill();ctx.strokeStyle='#72b68b44';ctx.lineWidth=1;for(let i=0;i<32;i++){let x=(i*43)%400,y=504+(i*67)%55;ctx.beginPath();ctx.moveTo(x,y+6);ctx.lineTo(x-3,y);ctx.moveTo(x,y+6);ctx.lineTo(x+4,y-2);ctx.stroke()}
+for(let i=0;i<12;i++){let x=(i*119+22)%W,y=(i*97+213)%H,r=1.5+(i%3)*.8;ctx.save();ctx.globalAlpha=.5+.4*Math.sin(time*1.3+i);ctx.fillStyle='#e8e1a0';ctx.shadowBlur=13;ctx.shadowColor='#e8e1a0';ctx.beginPath();ctx.arc(x+Math.sin(time*.7+i)*8,y+Math.cos(time*.8+i)*4,r,0,Math.PI*2);ctx.fill();ctx.restore()}
+}
+function drawFrog(x,y,invuln=0,t=0,size=1,mood='normal'){
+ ctx.save();ctx.translate(x,y);ctx.scale(size,size);
+ if(invuln>0&&Math.floor(invuln*13)%2===0)ctx.globalAlpha=.42;
+ ctx.fillStyle='#0007';ctx.beginPath();ctx.ellipse(0,25,35,8,0,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#68b976';ctx.beginPath();ctx.ellipse(0,3,26,24,0,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#92d491';ctx.beginPath();ctx.ellipse(0,8,18,15,0,0,Math.PI*2);ctx.fill();
+ for(const sx of [-16,16]){ctx.fillStyle='#62ae6c';ctx.beginPath();ctx.ellipse(sx,21,12,6,0,0,Math.PI*2);ctx.fill()}
+ const blink=mood==='normal'&&Math.sin(t*1.31)> .993;
+ for(const sx of [-16,16]){
+   ctx.fillStyle='#7bc782';ctx.beginPath();ctx.arc(sx,-13,13,0,Math.PI*2);ctx.fill();
+   if(mood==='happy'||mood==='smug'||blink){ctx.strokeStyle='#284537';ctx.lineWidth=2.4;ctx.lineCap='round';ctx.beginPath();
+     if(mood==='happy')ctx.arc(sx,-15,6,.1,Math.PI-.1);
+     else if(mood==='smug'){ctx.moveTo(sx-6,-16);ctx.quadraticCurveTo(sx,-22,sx+6,-16)}
+     else{ctx.moveTo(sx-6,-15);ctx.lineTo(sx+6,-15)}ctx.stroke();
+   }else{
+     ctx.fillStyle='#fff9e6';ctx.beginPath();ctx.ellipse(sx,-15,8,8.1,0,0,Math.PI*2);ctx.fill();
+     const eyeSize=mood==='panic'||mood==='wow'?2.2:3.3;
+     ctx.fillStyle='#192d34';ctx.beginPath();ctx.ellipse(sx+1,-14.1,eyeSize,mood==='panic'?3.4:4.5,0,0,Math.PI*2);ctx.fill();
+     ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(sx,-17,1.3,0,Math.PI*2);ctx.fill();
+     if(mood==='hurt'||mood==='sad'){ctx.strokeStyle='#345b48';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sx-8,-26);ctx.lineTo(sx+2,-23);ctx.stroke()}
+   }
+ }
+ ctx.fillStyle=mood==='panic'||mood==='hurt'?'#ff9faba8':'#f4a7a6aa';for(const sx of [-19,19]){ctx.beginPath();ctx.ellipse(sx,2,7,3.5,0,0,Math.PI*2);ctx.fill()}
+ ctx.strokeStyle='#335e46';ctx.fillStyle='#355b47';ctx.lineWidth=2.4;ctx.lineCap='round';ctx.beginPath();
+ if(mood==='wow'||mood==='panic'||mood==='hurt'){ctx.ellipse(0,4,5,mood==='wow'?8:6,0,0,Math.PI*2);ctx.fill()}
+ else if(mood==='sad'){ctx.arc(0,10,6,Math.PI+.18,Math.PI*2-.18);ctx.stroke()}
+ else if(mood==='smug'){ctx.moveTo(-7,3);ctx.quadraticCurveTo(4,10,10,-1);ctx.stroke()}
+ else{ctx.arc(0,0,8,.15,Math.PI-.15);ctx.stroke()}
+ ctx.save();ctx.translate(0,-36+Math.sin(t*3)*1.5);ctx.fillStyle='#e4b85b';ctx.strokeStyle='#ffe9a7';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(-16,2);ctx.lineTo(-20,-16);ctx.lineTo(-9,-9);ctx.lineTo(0,-24);ctx.lineTo(10,-9);ctx.lineTo(20,-17);ctx.lineTo(16,2);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#ffe8a4';pathRound(-16,-1,32,6,1);ctx.fill();ctx.fillStyle='#94e2d0';ctx.beginPath();ctx.arc(0,-11,3.3,0,Math.PI*2);ctx.fill();ctx.restore();ctx.restore()
+}
+function drawFeedback(){if(state.feedbackLeft<=0)return;const text=state.feedback;
+ ctx.save();ctx.textAlign='center';ctx.font='bold 16px sans-serif';let w=Math.min(270,ctx.measureText(text).width+28);let x=Math.max(w/2+10,Math.min(390-w/2,state.playerX));let y=401-(1.25-state.feedbackLeft)*12;
+ ctx.globalAlpha=Math.min(1,state.feedbackLeft*3);
+ ctx.fillStyle='#f8f0cc';ctx.strokeStyle='#7bd6b0';ctx.lineWidth=2;pathRound(x-w/2,y-22,w,31,12);ctx.fill();ctx.stroke();ctx.fillStyle='#163734';ctx.fillText(text,x,y);ctx.restore();}
+function drawWave(){if(state.waveLeft<=0)return;let alpha=Math.min(1,state.waveLeft*1.5);ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle='#14283bdc';pathRound(49,233,302,62,12);ctx.fill();ctx.strokeStyle='#f4c99d';ctx.stroke();ctx.textAlign='center';ctx.font='bold 18px sans-serif';ctx.fillStyle='#ffdcaa';ctx.fillText(state.wave===2?'最後の10秒！':'森がざわめいている…',200,272);ctx.restore()}
+function drawCollectible(item,t){ctx.save();ctx.translate(item.x,item.y);ctx.rotate(t*.6+item.phase);let sz=item.type==='pink'?20:15;let col=item.type==='blue'?'#a8f1ff':item.type==='pink'?'#ffb7da':'#ffe2a0';ctx.shadowColor=col;ctx.shadowBlur=18;ctx.fillStyle=col;starShape(0,0,sz,sz*.46,-t*.2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#fffef0';starShape(-2,-3,sz*.42,sz*.16);ctx.fill();ctx.restore()}
+function drawGem(item,t){ctx.save();ctx.translate(item.x,item.y);ctx.rotate(Math.sin(t*2+item.phase)*.28);ctx.shadowColor='#eab8ff';ctx.shadowBlur=24;ctx.fillStyle='#ad78da';ctx.strokeStyle='#ffe5a5';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-25);ctx.lineTo(18,0);ctx.lineTo(0,24);ctx.lineTo(-18,0);ctx.closePath();ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='#fff4d0';ctx.font='bold 23px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',0,1);ctx.restore()}
+function drawThorn(item,t){ctx.save();ctx.translate(item.x,item.y);ctx.rotate(t*.9+item.phase);ctx.shadowColor='#d390db';ctx.shadowBlur=9;ctx.fillStyle='#281f45';ctx.strokeStyle='#bb83c3';ctx.lineWidth=2;starShape(0,0,19,12,0);ctx.fill();ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='#a57ba8';ctx.beginPath();ctx.arc(-4,-4,2,0,Math.PI*2);ctx.fill();ctx.restore()}
+function particleBurst(x,y,color,count=10){for(let i=0;i<count;i++){let a=rand(0,Math.PI*2),v=rand(45,155);state.particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.3,.75),initial:.75,color,r:rand(1.8,4.4)})}}
+function drawParticles(dt){for(let i=state.particles.length-1;i>=0;i--){const p=state.particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=100*dt;p.life-=dt;if(p.life<=0){state.particles.splice(i,1);continue}ctx.globalAlpha=Math.min(1,p.life/.4);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1}
+function spawn(type,forcedX=null){
+ const x=forcedX===null?rand(32,368):Math.max(30,Math.min(370,forcedX));
+ const hard=state.elapsed/45;
+ const fast=(type==='thorn'?rand(195,265):rand(185,245))+hard*(type==='thorn'?215:185);
+ state.items.push({type,x,baseX:x,y:-30,vy:fast,phase:rand(0,6.28),age:0,swing:type==='thorn'?(hard>.45?rand(14,45):rand(0,11)):rand(4,15),frequency:rand(1.9,3.3)});
+}
+function hudUpdate(){ $('hudScore').textContent=fmt(state.score);$('hudLives').textContent='♥'.repeat(state.lives)+'♡'.repeat(3-state.lives);$('hudTime').textContent=String(Math.max(0,Math.ceil(45-state.elapsed)));$('hudTime').classList.toggle('time-low',45-state.elapsed<=10)}
+function start(){let name=cleanName($('nickname').value);if(!name){$('nickError').textContent='冒険者名を入力してください。';$('nickname').focus();return}
+ unlockAudio();$('nickError').textContent='';put('lastName',name);state.status='playing';state.name=name;state.score=0;state.stars=0;state.combo=0;state.maxCombo=0;state.lives=3;state.elapsed=0;state.playerX=200;state.targetX=null;state.move=0;state.items=[];state.particles=[];state.invuln=0;state.spawnStar=.36;state.spawnThorn=.92;state.spawnGem=rand(7,10);state.gambles=0;state.wins=0;state.face='normal';state.faceLeft=0;state.feedback='';state.feedbackLeft=0;state.wave=0;state.waveLeft=0;state.best=Number(get('best_'+name,0))||0;state.result=null;
+ $('startScreen').hidden=true;$('resultScreen').hidden=true;$('gambleScreen').hidden=true;$('hud').hidden=false;hudUpdate();$('rankPanel').classList.add('hidden');$('helpPanel').classList.add('hidden');sfx('safe');}
+function end(){if(state.status!=='playing')return;state.status='result';state.move=0;state.targetX=null;$('hud').hidden=true;let oldBest=Number(get('best_'+state.name,0))||0;let isNew=state.score>oldBest;state.best=Math.max(state.score,oldBest);put('best_'+state.name,state.best);let history=get('localHistory',[]);if(!Array.isArray(history))history=[];history.push({name:state.name,score:state.score,at:new Date().toISOString()});put('localHistory',history.slice(-150));state.result={name:state.name,score:state.score,best:state.best,stars:state.stars,combo:state.maxCombo,gambles:state.gambles,wins:state.wins,created:new Date(),isNew};$('resultName').textContent=state.name;$('resultScore').innerHTML=fmt(state.score)+' <span>pt</span>';$('resultTitle').textContent=titleFor(state.score);$('resultStars').textContent=fmt(state.stars);$('resultCombo').textContent=fmt(state.maxCombo);$('resultWins').textContent=state.wins+'/'+state.gambles;$('resultBest').textContent=(isNew?'自己ベスト更新！':'自己ベスト：'+fmt(state.best)+' pt')+(state.elapsed<45?' ・ 冒険終了':'');$('resultScreen').hidden=false;sfx('end');renderRanks()}
+function showGemChoice(){
+ state.status='choice';state.targetX=null;state.move=0;state.gambles++;$('gambleScreen').hidden=false;
+ react('wow','どっちにする？',1.5);sfx('gem');$('safeBtn').focus();
+}
+function resolveChoice(risky){
+ if(state.status!=='choice')return;
+ if(!risky){state.score+=600;react('happy','手堅く＋600！',1.2);sfx('safe');particleBurst(state.playerX,445,'#ffe0a3',20)}
+ else if(Math.random()<.4){state.score+=3000;state.wins++;react('wow','大当たり！＋3,000',1.6);sfx('win');particleBurst(state.playerX,445,'#ffd5ff',34)}
+ else{state.score=Math.max(0,state.score-400);state.combo=0;react('sad','残念…－400',1.5);sfx('lose');particleBurst(state.playerX,445,'#b1a1ff',12)}
+ state.status='playing';$('gambleScreen').hidden=true;state.move=0;state.targetX=null;hudUpdate();
+}
+$('safeBtn').addEventListener('click',()=>resolveChoice(false));
+$('riskBtn').addEventListener('click',()=>resolveChoice(true));
+function update(dt){
+ const before=state.elapsed;
+ state.elapsed=Math.min(45,state.elapsed+dt);
+ const progress=state.elapsed/45;
+ state.invuln=Math.max(0,state.invuln-dt);
+ state.faceLeft=Math.max(0,state.faceLeft-dt);
+ state.feedbackLeft=Math.max(0,state.feedbackLeft-dt);
+ state.waveLeft=Math.max(0,state.waveLeft-dt);
+ if(before<22&&state.elapsed>=22){state.wave=1;state.waveLeft=1.75;}
+ if(before<35&&state.elapsed>=35){state.wave=2;state.waveLeft=1.75;}
+ if(Math.ceil(45-before)!==Math.ceil(45-state.elapsed)&&state.elapsed>=42)sfx('tick');
+ const speed=272;
+ if(state.move!==0){state.playerX+=state.move*speed*dt}
+ else if(state.targetX!==null){const dx=state.targetX-state.playerX;state.playerX+=Math.sign(dx)*Math.min(Math.abs(dx),dt*620)}
+ state.playerX=Math.max(28,Math.min(W-28,state.playerX));
+ state.spawnStar-=dt;state.spawnThorn-=dt;state.spawnGem-=dt;
+ if(state.spawnStar<=0){const r=Math.random();spawn(r<.07?'pink':r<.26?'blue':'star');state.spawnStar=rand(.29,.48)-progress*.085}
+ if(state.spawnThorn<=0){
+   let x=rand(32,368);spawn('thorn',x);
+   if(progress>.4&&Math.random()<(.22+progress*.25))spawn('thorn',x+(Math.random()<.5?-rand(67,115):rand(67,115)));
+   state.spawnThorn=Math.max(.32,rand(.95,1.27)-progress*.56);
+ }
+ if(state.spawnGem<=0){spawn('gem');state.spawnGem=rand(8,11)}
+ for(let i=state.items.length-1;i>=0;i--){
+   const o=state.items[i];o.age+=dt;o.y+=o.vy*dt;
+   o.x=Math.max(24,Math.min(W-24,o.baseX+Math.sin(o.age*o.frequency+o.phase)*o.swing));
+   if(o.y>H+35){state.items.splice(i,1);continue}
+   const dx=o.x-state.playerX,dy=o.y-467;
+   if(Math.hypot(dx,dy)>=(o.type==='thorn'?30:o.type==='gem'?33:30))continue;
+   state.items.splice(i,1);
+   if(o.type==='thorn'){
+     if(state.invuln<=0){state.lives--;state.combo=0;state.invuln=1.05;react('hurt','いたっ！',.9);sfx('hurt');particleBurst(state.playerX,457,'#f8b0b4',15);
+      if(state.lives<=0){hudUpdate();end();return}}
+   }else if(o.type==='gem'){showGemChoice();hudUpdate();return}
+   else{
+     state.combo++;state.maxCombo=Math.max(state.maxCombo,state.combo);
+     const n=o.type==='pink'?500:o.type==='blue'?300:100;
+     const multi=Math.min(4,1+Math.floor((state.combo-1)/6));
+     state.score+=n*multi;state.stars++;
+     if(o.type==='pink')sfx('pink');else if(o.type==='blue')sfx('blue');else sfx('star');
+     if(o.type==='pink')react('wow','大きな星！',.67);
+     else if(state.combo>0&&state.combo%6===0)react('smug','×'+multi+' コンボ！',.85);
+     else if(state.faceLeft<=0&&state.combo>=3)react('happy','',.48);
+     particleBurst(o.x,o.y,o.type==='blue'?'#bff4ff':o.type==='pink'?'#ffb8df':'#ffe1a0',11);
+   }
+ }
+ // A near miss is reflected in the frog's expression without penalizing the player.
+ if(state.faceLeft<=0){let danger=state.items.some(o=>o.type==='thorn'&&o.y>383&&o.y<468&&Math.abs(o.x-state.playerX)<50);if(danger)react('panic','',.15)}
+ hudUpdate();if(state.elapsed>=45)end();
+}
+function frame(ms){
+ const t=ms/1000,dt=state.lastTime?Math.min(.05,Math.max(0,t-state.lastTime)):0;state.lastTime=t;
+ ctx.clearRect(0,0,W,H);forest(t);
+ if(state.status==='playing')update(dt);
+ for(const o of state.items){if(o.type==='thorn')drawThorn(o,t);else if(o.type==='gem')drawGem(o,t);else drawCollectible(o,t)}
+ const face=state.faceLeft>0?state.face:'normal';
+ drawFrog(state.playerX,467,state.status==='playing'?state.invuln:0,t,1,face);
+ if(state.status==='playing'||state.status==='choice'){drawFeedback();drawWave()}
+ drawParticles(dt);state.animation=requestAnimationFrame(frame);
+}
+$('startBtn').addEventListener('click',start);$('nickname').addEventListener('keydown',e=>{if(e.key==='Enter')start()});$('againBtn').addEventListener('click',start);$('finishBtn').addEventListener('click',()=>{state.status='start';$('resultScreen').hidden=true;$('startScreen').hidden=false;$('hud').hidden=true;state.items=[];state.particles=[];state.move=0;state.targetX=null});
+// Input via touchscreen drag, mouse and keyboard.
+const pointerToWorld=event=>{const rect=C.getBoundingClientRect();return (event.clientX-rect.left)*W/rect.width};
+let activePointer=null;C.addEventListener('pointerdown',e=>{if(state.status!=='playing')return;e.preventDefault();activePointer=e.pointerId;try{C.setPointerCapture(e.pointerId)}catch(err){}state.move=0;state.targetX=pointerToWorld(e)});
+C.addEventListener('pointermove',e=>{if(state.status==='playing'&&activePointer===e.pointerId){e.preventDefault();state.targetX=pointerToWorld(e)}});
+function releasePointer(e){if(activePointer===e.pointerId){activePointer=null;state.targetX=null}}C.addEventListener('pointerup',releasePointer);C.addEventListener('pointercancel',releasePointer);C.addEventListener('lostpointercapture',releasePointer);
+function bindMove(id,direction){let b=$(id);b.addEventListener('pointerdown',e=>{if(state.status!=='playing')return;e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(err){}state.targetX=null;state.move=direction;b.classList.add('active')});for(let name of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(name,()=>{if(state.move===direction)state.move=0;b.classList.remove('active')})}bindMove('leftBtn',-1);bindMove('rightBtn',1);
+const held={left:false,right:false};function updateHeld(){if(state.status!=='playing')return;state.targetX=null;state.move=(held.right?1:0)-(held.left?1:0)}document.addEventListener('keydown',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key)||state.status!=='playing')return;e.preventDefault();held[e.key==='ArrowLeft'?'left':'right']=true;updateHeld()});document.addEventListener('keyup',e=>{if(!['ArrowLeft','ArrowRight'].includes(e.key))return;held[e.key==='ArrowLeft'?'left':'right']=false;updateHeld()});window.addEventListener('blur',()=>{held.left=held.right=false;state.move=0});document.addEventListener('visibilitychange',()=>{if(document.hidden&&(state.status==='playing'||state.status==='choice'))state.lastTime=0});
+$('helpBtn').addEventListener('click',()=>{$('helpPanel').classList.toggle('hidden');if(!$('helpPanel').classList.contains('hidden'))$('helpPanel').scrollIntoView({behavior:'smooth',block:'nearest'})});$('rankingBtn').addEventListener('click',()=>{$('rankPanel').classList.toggle('hidden');if(!$('rankPanel').classList.contains('hidden')){$('rankPanel').scrollIntoView({behavior:'smooth',block:'nearest'});renderRanks()}});
+let currentTab='local';function setTab(which){currentTab=which;$('tabLocal').classList.toggle('on',which==='local');$('tabEvent').classList.toggle('on',which==='event');$('localPanel').classList.toggle('hidden',which!=='local');$('eventPanel').classList.toggle('hidden',which!=='event');renderRanks()};$('tabLocal').addEventListener('click',()=>setTab('local'));$('tabEvent').addEventListener('click',()=>setTab('event'));
+function localRows(){let data=get('localHistory',[]);if(!Array.isArray(data))return[];let best=new Map();for(let item of data){if(!item||typeof item.name!=='string'||!finiteScore(item.score))continue;let name=cleanName(item.name);if(name&&(!best.has(name)||best.get(name)<item.score))best.set(name,item.score)}return [...best].map(([name,score])=>({name,score})).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name,'ja')).slice(0,15)}
+function eventRows(){let data=get('eventScores',[]);return(Array.isArray(data)?data:[]).filter(e=>e&&typeof e.name==='string'&&finiteScore(e.score)).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name,'ja'))}
+function renderRows(node,rows,limit){node.replaceChildren();if(rows.length===0){let empty=document.createElement('div');empty.className='empty';empty.textContent='まだ記録がありません。';node.append(empty);return}for(let i=0;i<Math.min(rows.length,limit);i++){let item=rows[i],el=document.createElement('div');el.className='rankrow';for(let [cl,txt] of [['pos',String(i+1).padStart(2,'0')],['who',item.name],['pts',fmt(item.score)+' pt']]){let span=document.createElement('span');span.className=cl;span.textContent=txt;el.append(span)}node.append(el)}}
+function renderRanks(){renderRows($('localRanking'),localRows(),10);let ev=eventRows();renderRows($('eventRanking'),ev,10);let edit=$('eventEdit');edit.replaceChildren();for(let entry of ev){let row=document.createElement('div');row.className='editrow';let txt=document.createElement('span');txt.textContent=entry.name+' · '+fmt(entry.score)+' pt';let del=document.createElement('button');del.type='button';del.textContent='削除';del.addEventListener('click',()=>{if(!window.confirm('「'+entry.name+'」の記録を削除しますか？'))return;put('eventScores',eventRows().filter(i=>i.name!==entry.name));renderRanks()});row.append(txt,del);edit.append(row)}}
+$('rankForm').addEventListener('submit',e=>{e.preventDefault();const name=cleanName($('rankName').value),v=Number($('rankScore').value);if(!name||!finiteScore(v)){$('rankError').textContent='名前と0以上の整数スコアを入力してください。';return}$('rankError').textContent='';let arr=eventRows(),idx=arr.findIndex(x=>x.name===name);if(idx>=0)arr[idx].score=Math.max(arr[idx].score,v);else arr.push({name,score:v});put('eventScores',arr);$('rankForm').reset();renderRanks()});$('clearRankBtn').addEventListener('click',()=>{if(!window.confirm('イベント用の全記録を削除します。元には戻せません。よろしいですか？'))return;put('eventScores',[]);renderRanks()});
+function rr(g,x,y,w,h,r,fill,stroke){g.beginPath();g.roundRect(x,y,w,h,r);if(fill){g.fillStyle=fill;g.fill()}if(stroke){g.strokeStyle=stroke;g.lineWidth=2;g.stroke()}}
+function backgroundExport(g,w,h){let gradient=g.createLinearGradient(0,0,w,h);gradient.addColorStop(0,'#143e48');gradient.addColorStop(.6,'#092637');gradient.addColorStop(1,'#12233b');g.fillStyle=gradient;g.fillRect(0,0,w,h);let halo=g.createRadialGradient(w*.74,h*.2,10,w*.74,h*.2,w*.8);halo.addColorStop(0,'#bcd8b333');halo.addColorStop(1,'#bcd8b300');g.fillStyle=halo;g.fillRect(0,0,w,h);for(let i=0;i<72;i++){let x=(i*233+39)%w,y=(i*197+80)%h,s=i%5===0?3:1.7;g.fillStyle=i%3?'#f6dea86d':'#b9f4de66';g.beginPath();g.arc(x,y,s,0,Math.PI*2);g.fill()}rr(g,36,36,w-72,h-72,34,'#0b263a88','#efdba066');rr(g,60,60,w-120,h-120,24,'#0000001a','#fff5c218')}
+function exportCanvas(mode,entries){const c=document.createElement('canvas');c.width=1080;c.height=1350;const g=c.getContext('2d');const w=1080;const h=1350;backgroundExport(g,w,h);g.textAlign='center';g.fillStyle='#f5d992';g.font='bold 31px Georgia,serif';g.fillText('N I C O R A N A',540,125);g.fillStyle='#f9f2d9';g.font='bold 60px "Yu Mincho",serif';g.fillText('ニコラナと星のかけら',540,203);g.strokeStyle='#f3d18788';g.beginPath();g.moveTo(130,244);g.lineTo(950,244);g.stroke();if(mode==='result'){let r=state.result;if(!r)return null;g.fillStyle='#c0e2d0';g.font='32px sans-serif';g.fillText('約束の森 〜 冒険の記録 〜',540,310);g.fillStyle='#fff4db';g.font='bold 43px sans-serif';g.fillText(fitText(g,r.name,740,43)+' さん',540,397);g.fillStyle='#ffe4a4';g.font='bold 140px sans-serif';g.fillText(fmt(r.score),540,587);g.font='bold 35px sans-serif';g.fillText('POINTS',540,644);rr(g,245,700,590,78,39,'#4c442ab3','#ddc47a');g.fillStyle='#ffe3a6';g.font='bold 36px sans-serif';g.fillText(titleFor(r.score),540,751);g.fillStyle='#d8e8da';g.font='30px sans-serif';g.fillText('星  '+fmt(r.stars)+' 個   /   最大コンボ  '+fmt(r.combo),540,813);g.fillText('運命の大当たり  '+fmt(r.wins)+' / '+fmt(r.gambles)+' 回',540,861);g.fillText('自己ベスト  '+fmt(r.best)+' pt',540,909);drawExportFrog(g,540,1090);g.fillStyle='#d8e5cf';g.font='28px sans-serif';g.fillText('あなたの集めた光が、森を照らす。',540,1219);}
+else{g.fillStyle='#c0e2d0';g.font='37px sans-serif';g.fillText('イベントランキング',540,321);let rows=entries.slice(0,10);for(let i=0;i<rows.length;i++){let y=390+i*76;rr(g,118,y,844,63,12,i<3?'#284b4a':'#173b44',i===0?'#ead18866':null);g.textAlign='left';g.fillStyle=i===0?'#ffe4a6':'#e6e6c6';g.font='bold 31px Georgia,serif';g.fillText(String(i+1).padStart(2,'0'),144,y+42);g.fillStyle='#f7eed5';g.font='bold 30px sans-serif';g.fillText(fitText(g,rows[i].name,510,30),235,y+42);g.textAlign='right';g.fillStyle='#f6dea1';g.fillText(fmt(rows[i].score)+' pt',921,y+42);g.textAlign='center'}if(!rows.length){g.fillStyle='#cde1d6';g.font='30px sans-serif';g.fillText('まだ登録されたスコアがありません',540,590)}g.fillStyle='#d6ded0';g.font='27px sans-serif';g.fillText('スクリーンショット提出による手動集計',540,1223)}g.fillStyle='#a7bfac';g.font='24px sans-serif';g.fillText('NICORANA • THE PROMISED FOREST | v2',540,1280);return c}
+function fitText(g,t,maxPx,size){let txt=t;g.font=`bold ${size}px sans-serif`;while(txt.length>1&&g.measureText(txt).width>maxPx)txt=txt.slice(0,-2)+'…';return txt}
+function drawExportFrog(g,x,y){g.save();g.translate(x,y);g.fillStyle='#7cc581';g.beginPath();g.ellipse(0,18,82,75,0,0,Math.PI*2);g.fill();for(const xx of [-53,53]){g.fillStyle='#80ce86';g.beginPath();g.arc(xx,-32,42,0,Math.PI*2);g.fill();g.fillStyle='#f9f1db';g.beginPath();g.arc(xx,-40,27,0,Math.PI*2);g.fill();g.fillStyle='#243735';g.beginPath();g.arc(xx+4,-40,11,0,Math.PI*2);g.fill()}g.strokeStyle='#375c48';g.lineWidth=6;g.beginPath();g.arc(0,16,24,.2,Math.PI-.2);g.stroke();g.fillStyle='#f7b9b0';for(const xx of [-53,53]){g.beginPath();g.ellipse(xx,28,18,10,0,0,Math.PI*2);g.fill()}g.fillStyle='#f0c16f';g.strokeStyle='#ffe3a1';g.lineWidth=5;g.beginPath();g.moveTo(-54,-88);g.lineTo(-68,-139);g.lineTo(-29,-119);g.lineTo(0,-169);g.lineTo(30,-119);g.lineTo(69,-139);g.lineTo(54,-88);g.closePath();g.fill();g.stroke();g.restore()}
+function savePNG(canvas,filename){if(!canvas)return;function save(url){const a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove()}if(canvas.toBlob){canvas.toBlob(blob=>{if(!blob){save(canvas.toDataURL('image/png'));return}const url=URL.createObjectURL(blob);save(url);setTimeout(()=>URL.revokeObjectURL(url),10000)},'image/png')}else save(canvas.toDataURL('image/png'))}
+$('saveResultBtn').addEventListener('click',()=>{let c=exportCanvas('result');savePNG(c,'nicorana_v2_result_'+new Date().toISOString().slice(0,10)+'.png')});$('saveRankBtn').addEventListener('click',()=>{let c=exportCanvas('ranking',eventRows());savePNG(c,'nicorana_v2_ranking_'+new Date().toISOString().slice(0,10)+'.png')});
+renderRanks();state.animation=requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
